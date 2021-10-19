@@ -1,0 +1,117 @@
+{% extends 'shop/basic.html' %}
+{%block title%}Contact Us{%endblock%}
+{%block body%}
+{% load static %}
+<div class="loader_bg">
+    <div class="loader"><img src="{% static '/shop/loading.gif' %}" alt="#" /></div>
+</div>
+<div id="targetSuccess" style="width:80%; margin: auto; ">
+</div>
+<div class="container">
+    <div class="main-container container-fluid my-4">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-2">
+                <!-- THE CONTACT FORM IS HERE -->
+                <h2>Contact Us!</h2>
+                <form action="#" method='post' name="forminput" id="forminput">
+                    {% csrf_token %}
+                    <div class="row my-4">
+                        <div class="col mx-6">
+                            <input type="name" class="form-control" id="cname" name="cname" placeholder="Your Name" name="cname">
+                        </div>
+                        <div class="col mx-6">
+                            <input type="email" class="form-control" id="ccemail" name="cemail" placeholder="Enter your Email" name="cemail">
+                        </div>
+                    </div>
+                    <div class='row my-4'>
+                        <div class="col mx-6">
+                            <input type="tel" class="form-control" id="cphone" placeholder="Your Phone Number (with country code)" name="cphone">
+                        </div>
+                    </div>
+                    <div class='row my-4'>
+                        <div class="col mx-6">
+                            <input type="text" class="form-control" id="csubject" placeholder="Subject" name="csubject">
+                        </div>
+                    </div>
+                    <div class='row my-4'>
+                        <div class="col mx-1">
+                            <textarea placeholder="Describe What you want to ask!..." class="form-control" id="cmessage" name="cmessage"></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success mt-2">Submit</button>
+                </form>
+                <br>
+                <br> 
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}
+{%block homebutton%}
+<a class="nav-link" href="\shop/">Home <span class="sr-only">(current)</span></a>
+{%endblock%}
+{%block footermycartlink%}
+<a class="text-white" href="\shop/">MyCart.pk</a>
+{%endblock%}
+{%block js%}
+<script>
+$('#forminput').submit(function(event) {
+
+    var formData = {
+        'cname': $('input[name=cname]').val(),
+        'cemail': $('input[name=cemail]').val(),
+        'cphone': $('input[name=cphone]').val(),
+        'cmessage': $('textarea[name=cmessage]').val(),
+        'csubject': $('input[name=csubject]').val(),
+
+        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+
+
+    };
+    $('#targetSuccess').empty();
+
+    $.ajax({
+            type: 'POST',
+            url: '/shop/contact/',
+            data: formData,
+            encode: true
+        })
+        .done(function(data) {
+
+            console.log(data)
+            updates = JSON.parse(data);
+
+
+            idman = [updates][0]['id'];
+            if (idman != 'Please Fill all the Fields') {
+
+
+                mystr = `<svg xmlns = "http://www.w3.org/2000/svg" style ="display: none;" ><symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/> </symbol> </svg> <div class = "alert alert-success d-flex align-items-center" role = "alert" ><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg> <div> Thanks for Contacting Us! You can track your Contact Info by this ID: ${idman}</div> </div>`
+
+                $('#targetSuccess').append(mystr);
+
+                document.getElementById("forminput").reset();
+
+               
+            } else {
+                mystr = ` <svg xmlns="http://www.w3.org/2000/svg" style="display: none;"><symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></symbol></svg><div class="alert alert-warning d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg><div> 
+                    ${idman}</div></div>`
+
+                $('#targetSuccess').append(mystr);
+                
+            }
+
+
+
+        });
+
+    event.preventDefault();
+
+});
+</script>
+<script>
+    
+</script>
+<script src="{% static 'shop/jquery.min.js' %}"></script>
+<script src="{% static 'shop/custom.js' %}"></script>
+{%endblock%}

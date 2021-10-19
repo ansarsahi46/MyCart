@@ -1,0 +1,134 @@
+{%extends 'shop/basic.html'%}
+{%block body%}
+{%load static%}
+<div class="loader_bg">
+    <div class="loader"><img src="{% static '/shop/loading.gif' %}" alt="#" /></div>
+</div>
+<div class="container">
+    <div class="col my-4">
+        <h2> Items in Cart: </h2>
+        <div>
+        <ul class="list-group list-group-numbered" id="items">
+        </ul>
+    </div>
+    </div>
+    <div class="col my-4">
+        <h3> Your Total Bill is: </h3>
+        <div>
+        <ul class="list-group list-group-numbered" id="price" style="width:50%">
+        </ul>
+    </div>
+    </div>
+    <div class="col my-4">
+        <h2> Please Submit Your Details Here to Process this Order:--</h2>
+        <form action="\shop/checkout/" name="forminput" onsubmit="return submit_btncheck()" method='post' style="width: 50%">
+            {% csrf_token %}
+            <input type="hidden" name="itemsJson" id="itemsJson">
+            <div class="form-group">
+                <label for="name">Your Name</label>
+                <input type="name" class="form-control" id="oname" name="oname" placeholder="Enter your Name" name="cname">
+            </div>
+            <div class="form-group">
+                <label for="email">Your Email</label>
+                <input type="email" class="form-control" id="oemail" name="oemail" placeholder="Enter your Email" name="cemail">
+            </div>
+            <div class="form-group">
+                <label for="phone">Your Phone Number (with country code)</label>
+                <input type="tel" class="form-control" id="ophone" name="ophone" placeholder="Enter your Phone Number" name="cphone">
+            </div>
+            <div class="form-group">
+                <label for="adsress">Address</label>
+                <input type="text" class="form-control" id="oaddress" name="oaddress" placeholder="Address" name="caddress">
+            </div>
+            <button type="submit" value="submit" class="btn btn-danger mt-2">Submit</button>
+        </form>
+        <br>
+        <br>
+    </div>
+</div>
+{%endblock%}
+{% block js %}
+<script type="text/javascript">
+var sum = 0;
+var totalprice = 0;
+//Check the value of cart, if cart is not empty then store the value of cart in cart variable
+if (localStorage.getItem('cart') == null) {
+    var cart = {};
+} else {
+    cart = JSON.parse(localStorage.getItem('cart'));
+}
+//get the value of cart in Console
+
+
+//check that cart is Empty, if Empty then append this string
+if ($.isEmptyObject(cart)) {
+
+    myStr = `<p class= "my-3">Your Cart is Empty, Please Add Some Products befor Checking Out:</p>`
+    $('#items').append(myStr);
+
+
+
+} else {
+
+    for (item in cart) {
+        sum = sum + cart[item][0];
+        let qty = cart[item][0];
+        let name = cart[item][1];
+        
+        let itemprice = cart[item][2];
+
+        totalprice = totalprice + qty*itemprice; 
+        myStr = `<li class="list-group-item d-flex justify-content-between align-items-start">
+              ${name}          
+                <span class="badge bg-primary rounded-pill">${qty}</span>
+            </li>`
+
+        $('#items').append(myStr);
+    }
+
+     myStr = `<li class="list-group-item d-flex justify-content-between align-items-start">
+                
+                <span class="badge bg-primary rounded-pill">$ ${totalprice}</span>
+            </li>`
+        $('#price').append(myStr);
+
+
+}
+
+
+// for getting the total qty of items to show on cart
+document.getElementById('cart').innerHTML = sum;
+
+//check validate input
+function submit_btncheck() {
+    var name = document.forms["forminput"]["oname"].value;
+    var email = document.forms["forminput"]["oemail"].value;
+    var phone = document.forms["forminput"]["ophone"].value;
+    var address = document.forms["forminput"]["oaddress"].value;
+
+    if (name == '' || email == '' || phone == '' || address == '') {
+
+        alert(' Please fill all fields');
+        return false;
+    }
+
+    if ($.isEmptyObject(cart)) {
+        alert('Your Cart is Empty, Please Add Some Products befor Checking Out:');
+        return false;
+    }
+}
+
+
+//for qty and name of items
+$('#itemsJson').val(JSON.stringify(cart));
+console.log(cart); 
+
+{% if thank %}
+
+alert('Thanks for ording with us! You can track your order by this ID: {{id}}');
+localStorage.clear();
+document.location = "/shop"; {% endif %}
+</script>
+<script src="{% static 'shop/jquery.min.js' %}"></script>
+<script src="{% static 'shop/custom.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'blog\basic.html' %}
+{%block body %}
+<div class="container">
+    <div class="row mb-2 my-4">
+        {% for item in myposts reversed %}
+        <div class="col-md-6">
+            <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                <div class="col p-4 d-flex flex-column position-static">
+                    <strong class="d-inline-block mb-2 text-primary">World of Beauty</strong>
+                    <h3 class="mb-0">{{item.post_title}}</h3>
+                    <div class="mb-1 text-muted">{{item.publish_date}}</div>
+                    <p class="card-text mb-auto">{{item.chead0|slice:"0:100"}}...</p>
+                    <a href="blogpost/{{item.post_id}}/" class="stretched-link">Continue reading</a>
+                </div>
+                <div class="col-auto d-none d-lg-block">
+                    <img src="/media/{{item.post_image}}" class="bd-placeholder-img" style="width: 300px; height: 250px ;" aria-label="Placeholder: Thumbnail">
+                    <title>Placeholder</title></img>
+                </div>
+            </div>
+        </div>
+        {% if forloop.counter|divisibleby:2 %}
+    </div>
+    <div class="row mb-2 my-4">
+        {% endif %}
+        {% endfor %}
+    </div></div>
+    {% endblock %}

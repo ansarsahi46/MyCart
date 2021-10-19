@@ -1,0 +1,39 @@
+{% extends 'shop/basic.html' %}
+
+ {%block title%}{{products.product_name}}{%endblock%}
+ {%block style%}
+
+
+
+
+
+{%endblock%}
+{%block body%}
+
+<div class="container">
+<br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4" >
+            <img src="/media/{{products.product_image}}" width="250px; height:350px;"></img>
+            <br>
+            <br>
+            <button class="btn btn-primary">Add to Cart</button>
+            <button class="btn btn-primary mx-2">Buy Now</button>
+        </div>
+        <div class="col-md-8">
+            <h5>{{products.product_name}}</h5>
+            <h5 style="color:#B12704!important;">${{products.product_price}}</h5>
+            <p>{{products.product_des}}</p>
+
+        </div>
+    </div>
+</div>
+
+
+{%endblock%}
+
+ {%block js%}
+     <script src="/docs/5.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+{%endblock%}

@@ -1,0 +1,99 @@
+{% extends 'shop/basic.html'%}
+{% block body %}
+<div class="container">
+    <div class="col my-4">
+        <h2> Track Your Shipment here--</h2>
+        <form action="#" id="forminput" method='post' style="width: 50%">
+            {% csrf_token %}
+            <input type="hidden" name="itemsJson" id="itemsJson">
+            <div class="row my-4">
+                <div class="col mx-6">
+                    <label for="name">Track_Id</label>
+                    <input type="name" class="form-control" id="orderid" name="orderid" placeholder="Track_Id" name="orderid">
+                </div>
+                <div class="col mx-6">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="oemail" name="oemail" placeholder="Enter your Email" name="oemail">
+                </div>
+            </div>
+            <button type="submit" value="submit" class="btn btn-success mt-2">Track Your Shipment</button>
+        </form>
+    </div>
+    <div class="col my-4">
+        <h2> Your Order Status! </h2>
+        <ul class="list-group list-group-numbered" id="orderstatus">
+            Enter your order Id and Email and click Track Order to find details about your order!
+        </ul>
+    </div>
+    <div class="col my-4">
+        <h2> Your Order Detail! </h2>
+        <ul class="list-group list-group-numbered" id="items">
+        </ul>
+    </div>
+</div>
+{%endblock%}
+{% block js %}
+<script>
+$('#forminput').submit(function(event) {
+    $('#orderstatus').empty();
+    $('#items').empty();
+   
+    var formData = {
+        'orderid': $('input[name=orderid]').val(),
+        'oemail': $('input[name=oemail]').val(),
+        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+    };
+    $.ajax({
+            type: 'POST',
+            url: '/shop/tracker/',
+            data: formData,
+            encode: true
+        })
+        .done(function(data) {
+                console.log(data)
+                data = JSON.parse(data);
+                updates = data[0];
+                console.log(updates)
+
+                if (updates != undefined) {
+                    for (i = 0; i < updates.length; i++) {
+                        let text = updates[i]['text'];
+                        let time = updates[i]['time'];
+                        mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${text}
+                    <span class="badge badge-primary badge-pill">${time}</span>
+                </li>`
+                        $('#orderstatus').append(mystr);
+                    }
+                } else {
+                    mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                    Sorry, We are not able to fetch this order id and email. Make sure to type correct order Id and email</li>`
+                    $('#orderstatus').append(mystr);
+                }
+
+                data1 = JSON.parse(data[1]);
+                
+                for (item in data1) {
+
+                    let name = data1[item][1];
+                    let qty = data1[item][0];
+
+                    myStr = `<li class="list-group-item d-flex justify-content-between align-items-start">
+              ${name}          
+                <span class="badge bg-primary rounded-pill">${qty}</span>
+            </li>`
+                    $('#items').append(myStr);
+                }
+
+
+           
+
+
+        }); event.preventDefault();
+});
+</script>
+<script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+{%endblock%}
